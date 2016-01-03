@@ -42,7 +42,7 @@ int SPOTLIGHT = 10;
 int LOWBEAM = 8;
 int HIGHBEAM = 11;
 int TESTLED = 13;
-#else if
+#else
 int PWM1 = 12;
 int PWM2 = 11;
 
@@ -84,6 +84,25 @@ int switch5_timeout = 0;
 int switch5_locked = false;
 
 
+class Switch {
+  private:
+    int timeout;
+    int switch_locked;
+    
+  public:
+    Switch();
+    void Update(unsigned long duration);
+};
+
+
+Switch::Switch() {
+  this->timeout = 0;
+  this->switch_locked = 0;
+}
+
+void Switch::Update(unsigned long duration) {
+ 
+} 
 
 
 void setup()

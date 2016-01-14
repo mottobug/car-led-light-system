@@ -25,7 +25,7 @@ long randNumber = 0;
 long randomNext = 0;
 int randomSeq = 0;
 
-//#define DEBUG
+#define DEBUG
 
 // Prototypen Platine KJK Xray T3 2010
 //#define PROTOTYP
@@ -231,11 +231,11 @@ void backfire() {
  
 }
 
-Switch sw1(800, 1200);
+Switch sw1(700, 1200);
 Switch sw2(1200, 1400);
 Switch sw3(1400, 1600);
 Switch sw4(1600, 1800);
-Switch sw5(1800, 2200);
+Switch sw5(1800, 2300);
 
 void loop() {
 

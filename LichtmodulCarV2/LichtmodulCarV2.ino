@@ -29,6 +29,25 @@ int randomSeq = 0;
 
 // Prototypen Platine KJK Xray T3 2010
 //#define PROTOTYP
+#define GELAENDE
+
+
+#ifdef GELAENDE
+int PWM1 = 12;
+int PWM2 = 11;
+
+int BRAKE = 2;
+int LOWBEAM = 6;
+int BACKLIGHT = 13;
+int TURNSIGNAL = 5;
+int SPOTLIGHT = 4;
+int DAYLIGHT = 7;
+
+int BACKFIRE = 13;
+int TESTLED = 13;
+int HIGHBEAM = 3;
+
+#endif
 
 #ifdef PROTOTYP
 int PWM1 = 12;
@@ -42,7 +61,9 @@ int SPOTLIGHT = 10;
 int LOWBEAM = 8;
 int HIGHBEAM = 11;
 int TESTLED = 13;
-#else
+#endif
+
+#ifdef SONST
 int PWM1 = 12;
 int PWM2 = 11;
 
@@ -52,11 +73,8 @@ int BACKLIGHT = 2;
 int SPOTLIGHT = 4;
 int HIGHBEAM = 3;
 
-
 int BACKFIRE = 7;
-
 //int BACKFIRE = 10;
-
 int TESTLED = 13;
 #endif
 
@@ -131,15 +149,19 @@ void setup()
   pinMode(PWM1, INPUT);
   pinMode(PWM2, INPUT);
 
+  
+  #ifdef GELAENDE
   pinMode(BRAKE, OUTPUT);
   pinMode(BACKFIRE, OUTPUT);
   pinMode(BACKLIGHT, OUTPUT);
   pinMode(SPOTLIGHT, OUTPUT);
   pinMode(HIGHBEAM, OUTPUT);
   pinMode(LOWBEAM, OUTPUT);
+  pinMode(DAYLIGHT, OUTPUT);
+  pinMode(TURNSIGNAL, OUTPUT);
 
   pinMode(TESTLED, OUTPUT);
-
+  
   digitalWrite(BRAKE, 0);
   digitalWrite(HIGHBEAM, 0);
   digitalWrite(LOWBEAM, 0);
@@ -148,14 +170,16 @@ void setup()
   digitalWrite(BACKLIGHT, 1);
 
   delay(1000);
-  digitalWrite(BRAKE, 1);
+  digitalWrite(BRAKE, 0);
   digitalWrite(HIGHBEAM, 0);
   digitalWrite(LOWBEAM, 0);
   digitalWrite(BACKFIRE, 1);
   digitalWrite(SPOTLIGHT, 1);
   digitalWrite(BACKLIGHT, 0);
-
+  digitalWrite(DAYLIGHT, 1);  
+  digitalWrite(TURNSIGNAL, 0);  
   delay(1000);
+  #endif
 
   randomSeed(analogRead(0));
 
@@ -260,42 +284,48 @@ void loop() {
     if(switch1 == true) {   
    
     }
-    
+
+
     if(switch2 == true) {
       backFireEnabled = true;
     } else {
       backFireEnabled = false;
     }  
 
-
     if(switch3 == true) { // low beam
-      if(!switch5)
-        analogWrite(LOWBEAM, 192);
+      //if(!switch5)
+        analogWrite(LOWBEAM, 64);
       //digitalWrite(LOWBEAM, 0);
-      analogWrite(BRAKE, 192);
+      //analogWrite(BRAKE, 192);
     } else {
-      if(!switch5)
-        digitalWrite(LOWBEAM, 1);
-        digitalWrite(BRAKE, 1);
-    }        
+      digitalWrite(LOWBEAM, 0);
+      //if(!switch5)
+      //  digitalWrite(LOWBEAM, 1);
+      //  digitalWrite(BRAKE, 1);
+    } 
+       
 
+    
     if(switch4 == true) {
-      digitalWrite(HIGHBEAM, 1);
+      digitalWrite(DAYLIGHT, 0);
     } else {
-      digitalWrite(HIGHBEAM, 0);
+      digitalWrite(DAYLIGHT, 1);
     }
 
+    
+    
+
     if(switch5 && switch3) {
-      digitalWrite(LOWBEAM, 0);
-      if(duration2 > 1450) {
-        analogWrite(BRAKE, 192); // low beam back light
-      }      
-      if(!switch3)
-        analogWrite(LOWBEAM, 192);
+      digitalWrite(LOWBEAM, 1);
+      //if(duration2 > 1450) {
+      //  analogWrite(BRAKE, 192); // low beam back light
+      //}      
+      //if(!switch3)
+      //  analogWrite(LOWBEAM, 192);
     }   
 
 
-
+    #ifndef GELAENDE
     // brake
     if (duration2 > 1450) { // brake light switch
       if(!switch3) // wenn abblendlicht an
@@ -313,6 +343,24 @@ void loop() {
     }
 
     backfire();
+    #endif
+
+    #ifdef GELAENDE
+    if(backFireEnabled == true) {
+      digitalWrite(TURNSIGNAL, !digitalRead(TURNSIGNAL));
+      delay(550);
+    }
+    
+    // brake
+    if (duration2 > 1550) { // brake light switch
+      if(!switch3) // wenn abblendlicht an
+        digitalWrite(BRAKE, 0); // off
+    } else {
+      //if(!switch5)
+        digitalWrite(BRAKE, 1); // on
+    }
+    
+    #endif
     
     nextPrint = millis () + 10;
   }
